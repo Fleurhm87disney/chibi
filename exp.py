@@ -1,5 +1,7 @@
+class Expr(object):
+    pass
 
-class Val(object):
+class Val(Expr):
     __slots__ = ['value']
     def __init__(self, value = 0):
         self.value = value
@@ -9,42 +11,54 @@ class Val(object):
         return self.value
 
 v = Val(1)
-print(v)
+#print(v)
 assert v.eval() == 1
 
-class Add(object):
+def toExpr(a):
+    if not isinstance(a, Expr):
+            a = Val(a)
+    return a
+
+class Binary(Expr):
+    def __repr__(self):
+        cname = self.__class__.__name__
+        return f'{cname}({self.left},{self.right})'
+
+class Add(Binary):
     __slots__=['left', 'right']
     def __init__(self, a, b):
-        self.left = a
-        self.right = b
+        self.left = toExpr(a)   # aとb は式
+        self.right = toExpr(b)
     def eval(self):
         return self.left.eval() + self.right.eval()
 
-e = Add(Val(1), Val(2))  # 1+2
-print(e.eval())
-assert e.eval() == 3
-
-#次のステップ　1+2+3 ==> 6
+e = Add(1,Add(1,2))
+#print(e)
+assert e.eval() == 4
 
 e = Add(Val(1),Add(Val(2),Val(3)))
-print(e.eval())
+assert e.eval() == 6
 
-class Mul(object):
+class Sub(Binary):
     __slots__=['left', 'right']
     def __init__(self, a, b):
-        self.left = a
-        self.right = b
+        self.left = toExpr(a)   # aとb は式
+        self.right = toExpr(b)
+    def eval(self):
+        return self.left.eval() - self.right.eval()
+
+class Mul(Binary):
+    __slots__=['left', 'right']
+    def __init__(self, a, b):
+        self.left = toExpr(a)   # aとb は式
+        self.right = toExpr(b)
     def eval(self):
         return self.left.eval() * self.right.eval()
 
-e = Mul(Val(1), Val(2))  # 1*2
-print(e.eval())
-assert e.eval() == 2
-
-#次のステップ　1*2*3 ==> 6
-
-e = Mul(Val(1),Mul(Val(2),Val(3)))
-print(e.eval())
-
-
-print()
+class Div(Binary):
+    __slots__=['left', 'right']
+    def __init__(self, a, b):
+        self.left = toExpr(a)   # aとb は式
+        self.right = toExpr(b)
+    def eval(self):
+        return self.left.eval() // self.right.eval()
