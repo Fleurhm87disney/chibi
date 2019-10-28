@@ -14,3 +14,4 @@ print('pos', pos)
 s1 = s[0:pos]
 s2 = s[pos+1:]
 print(s, s1, s2)
+
