@@ -1,7 +1,7 @@
 import pegpy
 
 peg = pegpy.grammar('''
-Expression = product (^{ Value: str #Add })*
+Expression = Product (^{ '+' Product #Add })*
 Product = Value (^{ '*' Value #Mul})*
 Value = { [0-9]+ #Int }
 ''')
